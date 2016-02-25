@@ -96,7 +96,7 @@ void upwindGodunovStep() {
   int i, j;
     // find fluxes using Riemann solver
   for (j = 0; j < N - 1; j++){
-        Riemann(U[j], U[j + 1], F[j]);
+        Roe(U[j], U[j + 1], F[j]);
   }
     // update U
   for (j = 1; j < N - 1; j++){
