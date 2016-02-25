@@ -1,0 +1,29 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+datos0 = np.loadtxt('LaxFriedrichs_step_0.dat')
+datos1 = np.loadtxt('LaxFriedrichs_step_1.dat')
+datos2 = np.loadtxt('LaxFriedrichs_step_2.dat')
+datos3 = np.loadtxt('LaxFriedrichs_step_3.dat')
+datos4 = np.loadtxt('LaxFriedrichs_step_4.dat')
+datos5 = np.loadtxt('LaxFriedrichs_step_5.dat')
+
+fig = plt.figure()
+ax = plt.subplot(111)
+
+ax.plot(datos0[:,0],datos0[:,1],label='0')
+ax.plot(datos1[:,0],datos1[:,1],label='1')
+ax.plot(datos2[:,0],datos2[:,1],label='2')
+ax.plot(datos3[:,0],datos3[:,1],label='3')
+ax.plot(datos4[:,0],datos4[:,1],label='4')
+ax.plot(datos5[:,0],datos5[:,1],label='5')
+#axes = plt.gca()
+#xmax = np.amax(datos0[:,0])
+#axes.set_xlim([0,xmax])
+lgd = ax.legend(loc='center right', bbox_to_anchor=(1.3, 0.5))
+ax.set_title('Title')
+ax.set_xlabel('x label')
+ax.set_ylabel('y label') 
+# Put a legend below current axis
+
+plt.savefig("rho.pdf",bbox_extra_artists=(lgd,), bbox_inches='tight')

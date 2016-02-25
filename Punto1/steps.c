@@ -11,7 +11,7 @@ double L = 4.0;                    // length of shock tube
 double gama = 1.4;               // ratio of specific heats
 int N = 5000;                     // number of grid points
 
-double CFL = 0.9;                // Courant-Friedrichs-Lewy number
+double CFL = 0.4;                // Courant-Friedrichs-Lewy number
 double nu = 0.0;                 // artificial viscosity coefficient
 
 double **U = NULL;                      // solution with 3 components
