@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "steps.h"
 #include "riemann.h"
+#include "roe.h"
 
 /*
   C adaptation from C++ code written by Richard J. Gonsalves.
@@ -13,7 +14,7 @@ void solve(solver stepAlgorithm, double tMax, char *filename, int plots);
 int main()
 {
 //  solve(LaxFriedrichsStep, 1.0, "LaxFriedrichs", 5);
-  solve(upwindGodunovStep, 1.0, "UpwindGodunov", 5);
+   solve(upwindGodunovStep, 0.001, "UpwindGodunov", 5);
 }
 
 

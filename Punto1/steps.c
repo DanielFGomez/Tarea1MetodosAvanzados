@@ -11,7 +11,7 @@ double L = 4.0;                    // length of shock tube
 double gama = 1.4;               // ratio of specific heats
 int N = 5000;                     // number of grid points
 
-double CFL = 0.9;                // Courant-Friedrichs-Lewy number
+double CFL = 0.4;                // Courant-Friedrichs-Lewy number
 double nu = 0.0;                 // artificial viscosity coefficient
 
 double **U = NULL;                      // solution with 3 components
@@ -96,14 +96,15 @@ void upwindGodunovStep() {
   int i, j;
     // find fluxes using Riemann solver
   for (j = 0; j < N - 1; j++){
-        Riemann(U[j], U[j + 1], F[j]);
+        Roe(U[j], U[j + 1], F[j]);
   }
     // update U
   for (j = 1; j < N - 1; j++){
     for (i = 0; i < 3; i++){
-      U[j][i] -= tau / h * (F[j][i] - F[j - 1][i]);
+      U[j][i] -= tau / h * (F[j + 1][i] - F[j][i]);
     }
   }
+  boundaryConditions(U);
 }
 
 void LaxFriedrichsStep() {

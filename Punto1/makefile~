@@ -1,0 +1,17 @@
+all : Density.pdf Velocity.pdf Energy.pdf Pressure.pdf
+
+Density.pdf : LaxFriedrichs_step_0.dat
+		python plot_Profiles.py
+
+LaxFriedrichs_step_0.dat : test.x plot_Profiles.py
+		./test.x
+
+test.x : shocktube.c steps.c riemann.c 
+		gcc -o test.x shocktube.c steps.c riemann.c -lm
+
+clean : 
+	rm test.x
+	rm Density.pdf
+	rm Velocity.pdf
+	rm Energy.pdf
+	rm Pressure.pdf
