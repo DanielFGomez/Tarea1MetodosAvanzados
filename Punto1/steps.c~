@@ -101,7 +101,7 @@ void upwindGodunovStep() {
     // update U
   for (j = 1; j < N - 1; j++){
     for (i = 0; i < 3; i++){
-      U[j][i] -= tau / h * (F[j][i] - F[j - 1][i]);
+      U[j][i] -= tau / h * (F[j + 1][i] - F[j][i]);
     }
   }
   boundaryConditions(U);
