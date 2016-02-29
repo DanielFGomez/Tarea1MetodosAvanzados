@@ -1,12 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
-datos0 = np.loadtxt('LaxFriedrichs_step_0.dat')
-datos1 = np.loadtxt('LaxFriedrichs_step_1.dat')
-datos2 = np.loadtxt('LaxFriedrichs_step_2.dat')
-datos3 = np.loadtxt('LaxFriedrichs_step_3.dat')
-datos4 = np.loadtxt('LaxFriedrichs_step_4.dat')
-datos5 = np.loadtxt('LaxFriedrichs_step_5.dat')
+datosLF = np.loadtxt('LaxFriedrichs_finalstate.dat')
+datosUG = np.loadtxt('UpwindGodunov_finalstate.dat')
+datosAN = np.loadtxt('Analytic.dat')
+
+os.system('mkdir Plots/')
 
 results=['Density','Velocity','Energy','Pressure']
 i=1
@@ -16,19 +16,17 @@ for label in results:
 	fig = plt.figure()
 	ax = plt.subplot(111)
 
-	ax.plot(datos0[:,0],datos0[:,i],label='0')
-	ax.plot(datos1[:,0],datos1[:,i],label='1')
-	ax.plot(datos2[:,0],datos2[:,i],label='2')
-	ax.plot(datos3[:,0],datos3[:,i],label='3')
-	ax.plot(datos4[:,0],datos4[:,i],label='4')
-	ax.plot(datos5[:,0],datos5[:,i],label='5')
+	ax.plot(datosLF[:,0],datosLF[:,i],label='Lax Fridrich method')
+	ax.plot(datosUG[:,0],datosUG[:,i],label='Upwind Godunov method')
+	ax.plot(datosAN[:,0],datosAN[:,i],label='Analytic solution')
+	ax.set_ylim(0,np.amax(datosAN[:,i])*1.15)
 
-	lgd = ax.legend(loc='center right', bbox_to_anchor=(1.3, 0.5))
-	ax.set_title(label+' profile')
+	lgd = ax.legend(loc=3, bbox_to_anchor=(1.3, 0.5))
+	ax.set_title(label+' profile after one unit of time')
 	ax.set_xlabel('x')
 	ax.set_ylabel(label) 
 	# Put a legend below current axis
 
-	plt.savefig((label+".pdf"),bbox_extra_artists=(lgd,), bbox_inches='tight')
+	plt.savefig(("Plots/"+label+".pdf"),bbox_extra_artists=(lgd,), bbox_inches='tight')
 	i+=1
 

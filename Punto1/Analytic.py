@@ -94,7 +94,7 @@ for index in range(n_points):
         rho[index] = rho_r;
         P[index] = P_r;
         u[index] = u_r;
-    e[index] = P[index]/((gamma - 1)*rho[index]);
+    e[index] = P[index]/((gamma - 1)*rho[index]) + u[index]*u[index]/2.0;
     X[index] = index*(x_max-x_min)/n_points+x_min;
     f.write(str(X[index])[1:-1] + "\t" + str(rho[index])[1:-1] + "\t" + str(u[index])[1:-1] + "\t" +
             str(e[index])[1:-1] + "\t" + str(P[index])[1:-1] + "\n")

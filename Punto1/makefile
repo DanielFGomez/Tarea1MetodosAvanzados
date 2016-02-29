@@ -1,18 +1,19 @@
-all : Density.pdf Velocity.pdf Energy.pdf Pressure.pdf
+all : Plots
 
-Density.pdf : LaxFriedrichs_step_0.dat
+Plots : UpwindGodunov_finalstate.dat plot_Profiles.py Analytic.dat
 		python plot_Profiles.py
 
-LaxFriedrichs_step_0.dat : test.x plot_Profiles.py
-		./test.x
+Analytic.dat : Analytic.py
+		python Analytic.py
 
-test.x : shocktube.c steps.c riemann.c 
-		gcc -o test.x shocktube.c steps.c riemann.c -lm
+UpwindGodunov_finalstate.dat : sodtube.x plot_Profiles.py
+		./sodtube.x
+
+sodtube.x : sodtube.c 
+		gcc -o sodtube.x sodtube.c -lm
 
 clean : 
-	rm test.x
-	rm Density.pdf
-	rm Velocity.pdf
-	rm Energy.pdf
-	rm Pressure.pdf
-	rm LaxFriedrichs_step* 
+	rm sodtube.x
+	rm UpwindGodunov_finalstate.dat
+	rm Analytic.dat
+	rm -r Plots
