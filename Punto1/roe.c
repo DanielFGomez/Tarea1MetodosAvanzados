@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "roe.h"
 #define MIN(x,y) x<y?x:y
+#define MAX(x,y) x>y?x:y
 
 /*
   Roe's Riemann Solver    
@@ -24,9 +25,10 @@ void Roe(double *UR, double *UL, double *F) {
   double p_l = (UL[2] - rho_l * u_l * u_l / 2) * (gamma - 1);
   double h_l = (UL[2] + p_l) / rho_l;
 
-  // switch states if necessary so high pressure is on left
+  // switch states if necessary so high velocity is on left
   int revflag = FALSE;
-  if (p_l < p_r) {
+  if (u_l < u_r) {
+    printf("revflag! %f %f\n",u_l,u_r);
     double swap = p_r; p_r = p_l; p_l = swap;
     swap = u_r; u_r = -u_l; u_l = -swap;
     swap = rho_r; rho_r = rho_l; rho_l = swap;
@@ -39,7 +41,7 @@ void Roe(double *UR, double *UL, double *F) {
   double h_rl = (sqrt(rho_r) * h_r + sqrt(rho_l) * h_l) / (sqrt(rho_r) + sqrt(rho_l));
   double a_rl = sqrt((gamma - 1) * (h_rl - 0.5 * u_rl * u_rl));
 
-  // compute the wave velocities
+  // compute the wave speeds
   double l1 = u_rl;
   double l2 = u_rl + a_rl;
   double l3 = u_rl - a_rl;
@@ -67,15 +69,28 @@ void Roe(double *UR, double *UL, double *F) {
   double r3_3 = -(rho_rl / (2 * a_rl)) * (h_rl - a_rl * u_rl);
 
   // compute fluxes
-  double f1, f2, f3, a, u, rho;
-  if (revflag) {
-            f1 = -rho_l * u_l - r1_1 * MIN(0,l1) * dv1 - r2_1 * MIN(0,l2) * dv2 - r3_1 * MIN(0,l3) * dv3;
-            f2 = rho_l * u_l * u_l + p_l - r1_2 * MIN(0,l1) * dv1 - r2_2 * MIN(0,l2) * dv2 - r3_2 * MIN(0,l3) * dv3;
-            f3 = -rho_l * h_l * u_l - r1_3 * MIN(0,l1) * dv1 - r2_3 * MIN(0,l2) * dv2 - r3_3 * MIN(0,l3) * dv3;
+  double f1, f2, f3;
+  double minl1=MIN(0,l1);
+  double minl2=MIN(0,l2);
+  double minl3=MIN(0,l3);
+  double maxl1=MAX(0,l1);
+  double maxl2=MAX(0,l2);
+  double maxl3=MAX(0,l3);
+  if (revflag==1) {
+	f1 = -rho_l * u_l - (r1_1 * minl1 * dv1 + r2_1 * minl2 * dv2 + r3_1 * minl3 * dv3);
+        f2 = rho_l * u_l * u_l + p_l - (r1_2 * minl1 * dv1 + r2_2 * minl2 * dv2 + r3_2 * minl3 * dv3);
+        f3 = -rho_l * h_l * u_l - (r1_3 * minl1 * dv1 + r2_3 * minl2 * dv2 + r3_3 * minl3 * dv3);
+//	f1 = -rho_r * u_r + (r1_1 * maxl1 * dv1 + r2_1 * maxl2 * dv2 + r3_1 * maxl3 * dv3);
+//        f2 = rho_r * u_r * u_r + p_r + (r1_2 * maxl1 * dv1 + r2_2 * maxl2 * dv2 + r3_2 * maxl3 * dv3);
+//        f3 = -rho_r * h_r * u_r + (r1_3 * maxl1 * dv1 + r2_3 * maxl2 * dv2 + r3_3 * maxl3 * dv3);
+	printf("revflag! %f %f %f\n",rho_r,p_l,p_r);
     } else {
-            f1 = rho_l * u_l + r1_1 * MIN(0,l1) * dv1 + r2_1 * MIN(0,l2) * dv2 + r3_1 * MIN(0,l3) * dv3;
-            f2 = rho_l * u_l * u_l + p_l + r1_2 * MIN(0,l1) * dv1 + r2_2 * MIN(0,l2) * dv2 + r3_2 * MIN(0,l3) * dv3;
-            f3 = rho_l * h_l * u_l + r1_3 * MIN(0,l1) * dv1 + r2_3 * MIN(0,l2) * dv2 + r3_3 * MIN(0,l3) * dv3;
+        f1 = rho_l * u_l + (r1_1 * minl1 * dv1 + r2_1 * minl2 * dv2 + r3_1 * minl3 * dv3);
+        f2 = rho_l * u_l * u_l + p_l + (r1_2 * minl1 * dv1 + r2_2 * minl2 * dv2 + r3_2 * minl3 * dv3);
+        f3 = rho_l * h_l * u_l + (r1_3 * minl1 * dv1 + r2_3 * minl2 * dv2 + r3_3 * minl3 * dv3);
+//	f1 = rho_r * u_r - (r1_1 * maxl1 * dv1 + r2_1 * maxl2 * dv2 + r3_1 * maxl3 * dv3);
+//      f2 = rho_r * u_r * u_r + p_r - (r1_2 * maxl1 * dv1 + r2_2 * maxl2 * dv2 + r3_2 * maxl3 * dv3);
+//      f3 = rho_r * h_r * u_r - (r1_3 * maxl1 * dv1 + r2_3 * maxl2 * dv2 + r3_3 * maxl3 * dv3);
     }
 		
 
@@ -83,6 +98,7 @@ void Roe(double *UR, double *UL, double *F) {
   F[0] = f1;
   F[1] = f2;
   F[2] = f3;
-  if(f1>0 || f2>0 || f3>0)
-  	printf("%f %f %f\n",f1,f2,f3);
+  //printf("%f %f %f\n",dv1,dv2,dv3);
+  if(rho_r<0 || isnan(rho_r))
+  	printf("%f %f %f %d\n",rho_r,rho_l,f1, revflag);
 }
